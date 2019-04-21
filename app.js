@@ -98,6 +98,26 @@ var UIController = (function() {
       document.querySelector(element).insertAdjacentHTML('beforeend', newHtml);
     },
 
+    clearFields: function() {
+      var fields, fieldsArr;
+
+      // List of fields
+      fields = document.querySelectorAll(
+        DOMstrings.inputDescription + ', ' + DOMstrings.inputValue
+      );
+
+      // Create copy of array on fields (using call method) -> simply assigning a list to the array
+      fieldsArr = Array.prototype.slice.call(fields);
+
+      // Clear all value from inputs
+      fieldsArr.forEach(function(current, index, array) {
+        current.value = '';
+      });
+
+      // Focus on description input
+      fieldsArr[0].focus();
+    },
+
     getDOMstrings: function() {
       return DOMstrings;
     }
@@ -131,6 +151,9 @@ var controller = (function(budgetCtrl, UICtrl) {
 
     // Add the new item to the UI
     UICtrl.addListItem(newItem, input.type);
+
+    // Clear the fields
+    UICtrl.clearFields();
 
     // Calculate the budget
 
