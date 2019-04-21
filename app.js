@@ -5,6 +5,21 @@ var budgetController = (function() {
     this.id = id;
     this.description = description;
     this.value = value;
+    this.percentage = -1;
+  };
+
+  // Add function calcPercentage to contructor - calculate percentages
+  Expense.prototype.calcPercentage = function(totalIncome) {
+    if (totalIncome > 0) {
+      this.percentage = Math.round((this.value / totalIncome) * 100);
+    } else {
+      this.percentage = -1;
+    }
+  };
+
+  // Add function to Expense contructor - get all percentages
+  Expense.prototype.getPercentage = function() {
+    return this.percentage;
   };
 
   // Income contructor
@@ -98,6 +113,20 @@ var budgetController = (function() {
       } else {
         data.percentage = -1;
       }
+    },
+
+    // Calculate percentages function
+    calculatePercentages: function() {
+      data.allItems.exp.forEach(function(cur) {
+        cur.calcPercentage(data.totals.inc);
+      });
+    },
+
+    getPercentages: function() {
+      var allPerc = data.allItems.exp.map(function(cur) {
+        return cur.getPercentage();
+      });
+      return allPerc;
     },
 
     // Get all budget function
@@ -253,6 +282,18 @@ var controller = (function(budgetCtrl, UICtrl) {
     UICtrl.displayBudget(budget);
   };
 
+  // Update all percentage function
+  var updatePercentage = function() {
+    // Calculate percentages
+    budgetCtrl.calculatePercentages();
+
+    // Read percentages from the budget controller
+    var percentages = budgetCtrl.getPercentages();
+
+    // Update the UI with the new percentages
+    console.log(percentages);
+  };
+
   // Add item function
   var ctrlAddItem = function() {
     var input, newItem;
@@ -272,6 +313,9 @@ var controller = (function(budgetCtrl, UICtrl) {
 
       // Calculate and update budget
       updateBudget();
+
+      // Calculate and update percentages
+      updatePercentage();
     }
   };
 
@@ -295,6 +339,9 @@ var controller = (function(budgetCtrl, UICtrl) {
 
       // Update and show the new budget
       updateBudget();
+
+      // Calculate and update percentages
+      updatePercentage();
     }
   };
 
